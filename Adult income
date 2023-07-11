@@ -1,0 +1,94 @@
+import pandas as pd 
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+data = pd.read_csv(r"C:\Users\dell\OneDrive\Desktop\Data analytics files\adult.csv")
+data
+
+data.head(10)
+data.tail(10)
+data.shape
+
+print("Number of rows : ",data.shape[0])
+print("Number of columns : ",data.shape[1])
+
+data.info() 
+data1 = data.sample(frac=0.50) #to get random sample from dataset 50% 
+data1
+
+data.isnull().sum()
+sns.heatmap(data.isnull())
+
+data.tail(20)
+data.isin(["?"]).sum()
+data.columns
+data["workclass"] = data["workclass"].replace("?",np.nan)
+data["occupation"] = data["occupation"].replace("?",np.nan)
+data["native-country"] = data["native-country"].replace("?",np.nan)
+data.isin(["?"]).sum()
+data.isnull().sum()
+
+sns.heatmap(data.isnull())
+per_missing = data.isnull().sum()*100/len(data) #get the percentage of the missing values in the dataset
+per_missing
+
+data.dropna(how="any",inplace=True)
+data.shape
+
+dup= data.duplicated().any()
+print("Are there any duplicated values in a data : ",dup)
+
+data= data.drop_duplicates()
+data.shape
+
+data.describe(include="all")
+data.columns
+data["education"].unique()
+data["educational-num"].unique()
+data.describe(include="all")
+
+data.columns
+data = data.drop(["educational-num","capital-gain", "capital-loss"],axis=1)
+data.columns
+
+data.columns
+data["age"].describe()
+data["age"].hist()
+sum((data["age"]>= 17) & (data["age"]<=48))
+
+data["age"].between(17,48)
+
+data.columns
+data["workclass"].describe()
+plt.figure(figsize=(10,10))
+data["workclass"].hist()
+
+data.columns
+filter1 = data["education"] == "Bachelors"
+filter2 = data["education"] == "Masters"
+len(data[filter1 | filter2])
+
+data.columns
+sns.boxplot(x="income", y="age", data=data)
+
+data.columns
+data["income"].unique()
+data["income"].value_counts()
+sns.countplot("income",data=data)
+def income_data(inc):
+    if inc == '<=50K':
+        return 0 
+    else:
+        return 1
+data["encoded_income"] = data["income"].apply(income_data)
+data.head(1) #to test
+data.replace(to_replace=['<=50K', '>50K'],value=[0,1],inplace=True)
+data.head(1)
+
+data.groupby("workclass")["income"].mean().sort_values(ascending=False)
+data.groupby("gender")["income"].mean().sort_values(ascending=False)
+data.info()
+
+data["workclass"] = data["workclass"].astype("category")
+data.info()
